@@ -1,0 +1,77 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jun 20 11:15:50 2018
+
+@author: jackj
+"""
+import pandas as pd
+from task import task_one
+
+
+p_file = 'Rdata.csv'
+data_pred= pd.read_csv(p_file, sep=',', error_bad_lines=False, index_col=False, dtype='unicode')
+data_pred = data_pred[['age18to34','age35to64','state','raceID','totalPopulation','under18','age65plus','year']]
+data_pred.age18to34 = pd.to_numeric(data_pred.age18to34)
+data_pred.age35to64 = pd.to_numeric(data_pred.age35to64)
+data_pred.raceID = pd.to_numeric(data_pred.raceID)
+data_pred.totalPopulation = pd.to_numeric(data_pred.totalPopulation)
+data_pred.under18 = pd.to_numeric(data_pred.under18)
+data_pred.age65plus = pd.to_numeric(data_pred.age65plus)
+data_pred.year = pd.to_numeric(data_pred.year)
+
+
+t1 = task_one(data_pred)
+
+# get the plot stacked chart
+# Asian
+title = 'Asian alone or in combination with one or more other races, TimeSeries'
+group, name = 31, 'Asian_stacked_bar_chart_TimeSeries.png'
+t1.create_stack_bar_chart(data_pred, group, title, name)
+
+# Black
+title = 'Black or African American alone or in combination with one or more other races, TimeSeries'
+group, name = 5, 'Black_stacked_bar_chart_TimeSeries.png'
+t1.create_stack_bar_chart(data_pred, group, title, name)
+
+# Hispanic
+title = 'Hispanic or Latino (of any race), TimeSeries'
+group, name = 400, 'Hispanic_stacked_bar_chart_TimeSeries.png'
+t1.create_stack_bar_chart(data_pred, group, title, name)
+
+# White
+title = 'White alone or in combination with one or more other races, TimeSeries'
+group, name = 3, 'White_stacked_bar_chart_TimeSeries.png'
+t1.create_stack_bar_chart(data_pred, group, title, name)
+
+
+"""
+Create a heat map of which states will feel the biggest demographic shifts in 
+the above minority populations and what is the estimated percentage increase 
+in these 3 minority demographics from 2005(probably 2006 or 2007, it depends 
+on the data) to 2030 (table is fine to show percentage increase per minority 
+population)
+"""
+# Asian heatmap
+data_pred_ = data_pred[data_pred.raceID == 31]
+t1.heatmap(data_pred_, 'AsianHeatMap_TimeSeries.png', 'Asian HeatMap, TimeSeries')
+Est_increase_table_asian = t1.get_estimated_percentage_increased(data_pred_)
+
+data_pred_ = data_pred[data_pred.raceID == 31]
+data_pred_ = data_pred_[data_pred_ != 'California']
+t1.heatmap(data_pred_, 'AsianHeatMap_NoCA_TimeSeries.png', 'Asian HeatMap, without California, TimeSeries')
+
+# Black
+data_pred_ = data_pred[data_pred.raceID == 5]
+t1.heatmap(data_pred_, 'BlackHeatMap_TimeSeries.png', 'Black Or African American HeatMap, TimeSeries')
+Est_increase_table_black = t1.get_estimated_percentage_increased(data_pred_)
+
+# Hispanic
+data_pred_ = data_pred[data_pred.raceID == 400]
+t1.heatmap(data_pred_, 'HispanicHeatMap_TimeSeries.png', 'Hispanic HeatMap, TimeSeries')
+Est_increase_table_hispanic = t1.get_estimated_percentage_increased(data_pred_)
+
+"""
+From 2005 to 2030, show a table that depicts the % share of Whites, 
+Asian Americans, Blacks, and Hispanics in the US population per year
+"""
+share_table_TimeSeries = t1.get_sharing_percentage_table(data_pred)
